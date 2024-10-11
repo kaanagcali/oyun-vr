@@ -8,7 +8,7 @@ public class SwordHit : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.TryGetComponent<Player>(out var player))
+        if (other.TryGetComponent<IDamageable>(out var player) && transform.root.gameObject != other.gameObject)
         {
             player.ApplyDamage(_hitType);
         }    

@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityHFSM;
 
 [RequireComponent(typeof(AIMovementController))]
-public class BaseEnemy : MonoBehaviour
+public class BaseEnemy : MonoBehaviour, IDamageable
 {
     // Declare the finite state machine
     private StateMachine fsm;
@@ -25,6 +26,16 @@ public class BaseEnemy : MonoBehaviour
 
     private Vector3 playerPosition => Player.Instance.transform.position;
     private float distanceToPlayer => Vector2.Distance(playerPosition, transform.position);
+
+    public event Action OnHit;
+
+    public void ApplyDamage(SwordHitType hitType)
+    {
+        if (hitType == SwordHitType.Complete && GameManager.Instance.GameType == GameType.Sword)
+        {
+            OnHit?.Invoke();
+        }
+    }
 
     void Start()
     {
