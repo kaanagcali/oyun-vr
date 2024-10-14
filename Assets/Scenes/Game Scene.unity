@@ -3636,7 +3636,7 @@ Animator:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 989111486}
   m_Enabled: 1
-  m_Avatar: {fileID: 0}
+  m_Avatar: {fileID: 9000000, guid: 1ad92c1aef3a1b14e873ecc285f50467, type: 3}
   m_Controller: {fileID: 9100000, guid: 1720c98616a0f194dae551fe7645b49b, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
@@ -6857,6 +6857,21 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4807247779862441579, guid: 6526a628e8802c949bf99baa2148b7e6,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[0].m_Text
+      value: Easy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4807247779862441579, guid: 6526a628e8802c949bf99baa2148b7e6,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[1].m_Text
+      value: Medium
+      objectReference: {fileID: 0}
+    - target: {fileID: 4807247779862441579, guid: 6526a628e8802c949bf99baa2148b7e6,
+        type: 3}
+      propertyPath: m_Options.m_Options.Array.data[2].m_Text
+      value: Hard
+      objectReference: {fileID: 0}
     - target: {fileID: 4916645825000440929, guid: 6526a628e8802c949bf99baa2148b7e6,
         type: 3}
       propertyPath: m_IsActive
@@ -6936,6 +6951,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_AnchorMin.x
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7577178031221000070, guid: 6526a628e8802c949bf99baa2148b7e6,
+        type: 3}
+      propertyPath: m_Value
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 7577178031403537424, guid: 6526a628e8802c949bf99baa2148b7e6,
         type: 3}

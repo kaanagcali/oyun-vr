@@ -20,7 +20,7 @@ public class InGameUIManager : MonoBehaviour
 
     private int _activePanelIndex = 0;
     private GameDifficulty _gameDifficulty = GameDifficulty.Easy;
-    private GameType _gameType = GameType.Flöre;
+    private GameType _gameType = GameType.Sword;
     private int _roundCount;
     private bool _isOpen = true;
     private Vector3 _defaultScale;
