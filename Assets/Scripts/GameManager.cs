@@ -30,6 +30,8 @@ public class GameManager : MonoBehaviour
     public Action OnGameStartEvent;
     public Action OnGameEndEvent;
     public Action OnRoundEndEvent;
+    
+    [SerializeField] private GameObject[] objArrayToToggleOnStart;
 
     private void Awake() {
         Instance = this;
@@ -78,17 +80,18 @@ public class GameManager : MonoBehaviour
         if (_currentRound == _maxRound)
             EndGame();
         else
-            StartNewRound();
+            StartNewRound(2f);
         _currentRound++;
     }
 
     public Action<int> OnRoundCounterChangedEvent;
 
-    private void StartNewRound()
+    private void StartNewRound(float delay)
     {
         StartCoroutine(NewRoundCoroutine());
         IEnumerator NewRoundCoroutine()
         {
+            yield return new WaitForSeconds(delay);
             int counter = 3;
             OnRoundCounterChangedEvent?.Invoke(counter);
             while (counter > 0)
@@ -106,6 +109,11 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
+        foreach (var obj in objArrayToToggleOnStart)
+        {
+            obj.SetActive(!obj.activeSelf);
+        }
+
         OnGameEndEvent?.Invoke();
     }
 
@@ -118,12 +126,17 @@ public class GameManager : MonoBehaviour
 
     public void StartGame(GameType gameType, GameDifficulty gameDifficulty, int roundCount)
     {
+        foreach (var obj in objArrayToToggleOnStart)
+        {
+            obj.SetActive(!obj.activeSelf);
+        }
+
         _maxRound = roundCount;
         GameType = gameType;
         GameDifficulty = gameDifficulty;
 
         OnGameStartEvent?.Invoke();
 
-        StartNewRound();
+        StartNewRound(1);
     }
 }

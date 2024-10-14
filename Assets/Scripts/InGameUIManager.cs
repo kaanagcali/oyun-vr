@@ -52,6 +52,12 @@ public class InGameUIManager : MonoBehaviour
         _roundCountTMP.SetText(_roundCount.ToString());
     }
 
+    private void Start()
+    {
+        GameManager.Instance.OnGameEndEvent += OpenUI;
+        GameManager.Instance.OnGameStartEvent += CloseUI;
+    }
+
     private void OnEnable()
     {
         _roundCountSlider.onValueChanged.AddListener(OnRoundCountChanged);
@@ -90,7 +96,6 @@ public class InGameUIManager : MonoBehaviour
 
     private void StartGame()
     {
-        CloseUI();
         GameManager.Instance.ClearActiveGame();
         GameManager.Instance.StartGame(_gameType, _gameDifficulty, _roundCount);
     }
