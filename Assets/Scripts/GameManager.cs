@@ -21,6 +21,11 @@ public class GameManager : MonoBehaviour
     private int _aiScore;
     public int AiScore => _aiScore;
 
+    public GameObject confetti;
+
+    public AudioClip winClip;
+    public AudioClip loseClip;
+
     [SerializeField] private BaseEnemy _ai;
     [SerializeField] private Player _human;
     
@@ -112,6 +117,18 @@ public class GameManager : MonoBehaviour
         foreach (var obj in objArrayToToggleOnStart)
         {
             obj.SetActive(!obj.activeSelf);
+        }
+
+        if (AiScore > HumanScore)
+        {
+            AudioSource.PlayClipAtPoint(loseClip, Camera.main.transform.position);
+        }
+        else
+        {
+            AudioSource.PlayClipAtPoint(winClip, Camera.main.transform.position);
+            confetti.transform.position = Camera.main.transform.position + Camera.main.transform.forward * 3f;
+            confetti.gameObject.SetActive(false);
+            confetti.gameObject.SetActive(true);
         }
 
         OnGameEndEvent?.Invoke();
