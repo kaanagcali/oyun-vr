@@ -37,6 +37,8 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         }
     }
 
+    public float[] attackDurations;
+
     void Start()
     {
         movementController = GetComponent<AIMovementController>();
@@ -52,14 +54,24 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         );
 
         fightFsm.AddState("Wait", onEnter: state => animator.SetAnimatorParameter(AnimatorParameterType.Bool, "move", false));
-        fightFsm.AddState("Telegraph", onEnter: state => animator.SetAnimatorParameter(AnimatorParameterType.Trigger, "attack1"));
+        
+        for (int i = 0; i < attackDurations.Length; i++)
+        {
+            int rand = i;
+            fightFsm.AddState("Telegraph" + rand.ToString(), onEnter: state => animator.SetAnimatorParameter(AnimatorParameterType.Trigger, "attack" + (rand + 1).ToString()));
+            fightFsm.AddTransition(new TransitionAfter("Telegraph" + i.ToString(), "Wait", attackDurations[rand]));
+        }
+
+        fightFsm.AddState("Telegraph", onEnter: state => { 
+            int random = UnityEngine.Random.Range(0, attackDurations.Length);
+            Debug.Log("telegraph " + random);
+        fightFsm.RequestStateChange("Telegraph" + random); } );
 
         // Because the exit transition should have the highest precedence,
         // it is added before the other transitions.
         fightFsm.AddExitTransition("Wait");
 
         fightFsm.AddTransition(new TransitionAfter("Wait", "Telegraph", 0.5f));
-        fightFsm.AddTransition(new TransitionAfter("Telegraph", "Wait", attackDuration));
 
         // Root FSM
         fsm.AddState("Chase", new State(

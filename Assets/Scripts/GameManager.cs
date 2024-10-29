@@ -26,7 +26,9 @@ public class GameManager : MonoBehaviour
     public AudioClip winClip;
     public AudioClip loseClip;
 
-    [SerializeField] private BaseEnemy _ai;
+    [SerializeField] private BaseEnemy _aiEasy;
+    [SerializeField] private BaseEnemy _aiNormal;
+    [SerializeField] private BaseEnemy _aiHard;
     [SerializeField] private Player _human;
     
     protected Vector3 _startPosOfAI;
@@ -45,13 +47,17 @@ public class GameManager : MonoBehaviour
 
     private void Start()
     {
-        if (!_ai) return;
+        if (!_aiEasy) return;
 
-        _startPosOfAI = _ai.transform.position;
-        _startAngleOfAI = _ai.transform.eulerAngles;
-        _ai.gameObject.SetActive(false);
+        _startPosOfAI = _aiEasy.transform.position;
+        _startAngleOfAI = _aiEasy.transform.eulerAngles;
+        _aiEasy.gameObject.SetActive(false);
+        _aiNormal.gameObject.SetActive(false);
+        _aiHard.gameObject.SetActive(false);
 
-        _ai.OnHit += OnAiHit;
+        _aiEasy.OnHit += OnAiHit;
+        _aiNormal.OnHit += OnAiHit;
+        _aiHard.OnHit += OnAiHit;
         _human.OnHit += OnHumanHit;
     }
 
@@ -79,7 +85,9 @@ public class GameManager : MonoBehaviour
 
     private void OnRoundEnd()
     {
-        _ai.gameObject.SetActive(false);
+        _aiEasy.gameObject.SetActive(false);
+        _aiNormal.gameObject.SetActive(false);
+        _aiHard.gameObject.SetActive(false);
         _isRoundEnd = true;
         OnRoundEndEvent?.Invoke();
         if (_currentRound == _maxRound)
@@ -105,10 +113,22 @@ public class GameManager : MonoBehaviour
                 counter--;
                 OnRoundCounterChangedEvent?.Invoke(counter);
             }
-            _ai.transform.position = _startPosOfAI;
-            _ai.transform.eulerAngles = _startAngleOfAI;
+            _aiEasy.transform.position = _startPosOfAI;
+            _aiEasy.transform.eulerAngles = _startAngleOfAI;
+
+            _aiNormal.transform.position = _startPosOfAI;
+            _aiNormal.transform.eulerAngles = _startAngleOfAI;
+
+            _aiHard.transform.position = _startPosOfAI;
+            _aiHard.transform.eulerAngles = _startAngleOfAI;
+
             _isRoundEnd = false;
-            _ai.gameObject.SetActive(true);
+            if (GameDifficulty == GameDifficulty.Easy)
+                _aiEasy.gameObject.SetActive(true);
+            else if (GameDifficulty == GameDifficulty.Normal)
+                _aiNormal.gameObject.SetActive(true);
+            else
+                _aiHard.gameObject.SetActive(true);
         }
     }
 

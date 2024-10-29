@@ -12,6 +12,7 @@ public class InGameUIManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI _headerTMP;
     [SerializeField] private TextMeshProUGUI _roundCountTMP;
+    [SerializeField] private TMP_Dropdown _dropdown;
     [SerializeField] private List<PanelData> _panelList;
     [SerializeField] private Slider _roundCountSlider;
     [SerializeField] private Button _startGameBtn;
@@ -61,14 +62,21 @@ public class InGameUIManager : MonoBehaviour
     private void OnEnable()
     {
         _roundCountSlider.onValueChanged.AddListener(OnRoundCountChanged);
+        _dropdown.onValueChanged.AddListener(OnDifficultyChanged);
         _startGameBtn.onClick.AddListener(StartGame);
         _showNextPanelBtn.onClick.AddListener(ActivateNextPanel);
         _showPrevPanelBtn.onClick.AddListener(ActivatePreviousPanel);
     }
 
+    private void OnDifficultyChanged(int arg0)
+    {
+        _gameDifficulty = (GameDifficulty)arg0;
+    }
+
     private void OnDisable()
     {
         _roundCountSlider.onValueChanged.RemoveListener(OnRoundCountChanged);
+        _dropdown.onValueChanged.RemoveListener(OnDifficultyChanged);
         _startGameBtn.onClick.RemoveListener(StartGame);
         _showNextPanelBtn.onClick.RemoveListener(ActivateNextPanel);
         _showPrevPanelBtn.onClick.RemoveListener(ActivatePreviousPanel);
