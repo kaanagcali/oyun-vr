@@ -19,6 +19,10 @@ public class SwordHit : MonoBehaviour
     {
         if (other.TryGetComponent<IDamageable>(out var player) && transform.root.gameObject != other.gameObject)
         {
+            if (other.gameObject.GetComponent<CharacterController>() != null)
+            {
+                if (transform.root.childCount == 5) return;
+            }
             if (Time.time < lastHitSwordTime + cantDamageWhenHitSword)
             {
                 return;
