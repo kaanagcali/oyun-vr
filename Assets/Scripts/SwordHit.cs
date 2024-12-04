@@ -15,10 +15,14 @@ public class SwordHit : MonoBehaviour
 
     public GameObject hitPF;
 
+    public Transform fakeRoot;
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.TryGetComponent<IDamageable>(out var player) && transform.root.gameObject != other.gameObject)
         {
+            if (fakeRoot && fakeRoot.gameObject == other.gameObject) return;
+            
             if (other.gameObject.GetComponent<CharacterController>() != null)
             {
                 if (transform.root.childCount == 5) return;

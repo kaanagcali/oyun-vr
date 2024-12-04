@@ -39,6 +39,8 @@ public class BaseEnemy : MonoBehaviour, IDamageable
 
     public float[] attackDurations;
 
+    int lastRandom = -1;
+
     void Start()
     {
         movementController = GetComponent<AIMovementController>();
@@ -64,6 +66,10 @@ public class BaseEnemy : MonoBehaviour, IDamageable
 
         fightFsm.AddState("Telegraph", onEnter: state => { 
             int random = UnityEngine.Random.Range(0, attackDurations.Length);
+            while (random == lastRandom) {
+                random = UnityEngine.Random.Range(0, attackDurations.Length);
+            }
+            lastRandom = random;
             Debug.Log("telegraph " + random);
         fightFsm.RequestStateChange("Telegraph" + random); } );
 
@@ -71,7 +77,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         // it is added before the other transitions.
         fightFsm.AddExitTransition("Wait");
 
-        fightFsm.AddTransition(new TransitionAfter("Wait", "Telegraph", 0.5f));
+        fightFsm.AddTransition(new TransitionAfter("Wait", "Telegraph", 0.2f));
 
         // Root FSM
         fsm.AddState("Chase", new State(
