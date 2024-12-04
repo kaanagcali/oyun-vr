@@ -1,11 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using DG.Tweening;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance { get; private set;}
+    public static GameManager Instance { get; private set; }
 
     public GameType GameType { get; private set; }
     public GameDifficulty GameDifficulty { get; private set; }
@@ -30,17 +31,18 @@ public class GameManager : MonoBehaviour
     [SerializeField] private BaseEnemy _aiNormal;
     [SerializeField] private BaseEnemy _aiHard;
     [SerializeField] private Player _human;
-    
+
     protected Vector3 _startPosOfAI;
     protected Vector3 _startAngleOfAI;
 
     public Action OnGameStartEvent;
     public Action OnGameEndEvent;
     public Action OnRoundEndEvent;
-    
+
     [SerializeField] private GameObject[] objArrayToToggleOnStart;
 
-    private void Awake() {
+    private void Awake()
+    {
         Instance = this;
         GameType = GameType.Sword;
     }
@@ -61,7 +63,8 @@ public class GameManager : MonoBehaviour
         _human.OnHit += OnHumanHit;
     }
 
-    private void Update() {
+    private void Update()
+    {
         if (Input.GetKeyDown(KeyCode.H))
         {
             ClearActiveGame();
@@ -73,27 +76,46 @@ public class GameManager : MonoBehaviour
     {
         if (_isRoundEnd) return;
         _humanScore++;
+        newRoundStartDelay = aiNewRoundDelay;
         OnRoundEnd();
     }
+
+    float aiNewRoundDelay = 3;
+    float newRoundStartDelay = 2;
+    float playerNewRoundDelay = 2;
 
     private void OnHumanHit()
     {
         if (_isRoundEnd) return;
         _aiScore++;
+        newRoundStartDelay = playerNewRoundDelay;
         OnRoundEnd();
     }
 
     private void OnRoundEnd()
     {
-        _aiEasy.gameObject.SetActive(false);
+        if (newRoundStartDelay == aiNewRoundDelay)
+        {
+            Time.timeScale = 0.5f;
+            transform.DOScale(transform.localScale, 2).OnComplete(() => {
+                _aiEasy.gameObject.SetActive(false);
         _aiNormal.gameObject.SetActive(false);
         _aiHard.gameObject.SetActive(false);
+        Time.timeScale = 1;
+            });
+        }
+        else
+        {
+            _aiEasy.gameObject.SetActive(false);
+            _aiNormal.gameObject.SetActive(false);
+            _aiHard.gameObject.SetActive(false);
+        }
         _isRoundEnd = true;
         OnRoundEndEvent?.Invoke();
         if (_currentRound == _maxRound)
             EndGame();
         else
-            StartNewRound(2f);
+            StartNewRound(newRoundStartDelay);
         _currentRound++;
     }
 

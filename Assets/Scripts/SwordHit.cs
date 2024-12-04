@@ -22,7 +22,7 @@ public class SwordHit : MonoBehaviour
         if (other.TryGetComponent<IDamageable>(out var player) && transform.root.gameObject != other.gameObject)
         {
             if (fakeRoot && fakeRoot.gameObject == other.gameObject) return;
-            
+
             if (other.gameObject.GetComponent<CharacterController>() != null)
             {
                 if (transform.root.childCount == 5) return;
@@ -31,10 +31,15 @@ public class SwordHit : MonoBehaviour
             {
                 return;
             }
+            Vector3 hitPosition = other.ClosestPoint(transform.position);
+            if (other.gameObject.TryGetComponent<BaseEnemy>(out var enemy))
+            {
+                enemy.AssignHitPosition(hitPosition);
+            }
             player.ApplyDamage(_hitType);
             if (someoneDamagedClip)
                 AudioSource.PlayClipAtPoint(someoneDamagedClip, transform.position);
-            Vector3 hitPosition = other.ClosestPoint(transform.position);
+            
             if (hitPF)
                 Instantiate(hitPF, hitPosition, Quaternion.identity);
         }

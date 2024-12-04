@@ -29,12 +29,49 @@ public class BaseEnemy : MonoBehaviour, IDamageable
 
     public event Action OnHit;
 
+    private RagdollHandler ragdollHandler;
+
+    private void Awake()
+    {
+        coll = GetComponent<Collider>();
+        ragdollHandler = GetComponentInChildren<RagdollHandler>();
+    }
+
+    private Vector3 hitPos;
+
+    float lastHitTime;
+    Collider coll;
+
+    public void AssignHitPosition(Vector3 hitPos)
+    {
+        this.hitPos = hitPos;
+    }
+
+    bool isHit = false;
+
     public void ApplyDamage(SwordHitType hitType)
     {
         if (hitType == SwordHitType.Complete && GameManager.Instance.GameType == GameType.Sword)
         {
             OnHit?.Invoke();
+            if (Time.time >= lastHitTime + 5)
+            {
+                coll.enabled = false;
+                movementController.NavMeshAgent.enabled = false;
+                isHit = true;
+                ragdollHandler.OpenColliders();
+                ragdollHandler.ApplyForceBy(hitPos);
+                lastHitTime = Time.time;
+            }
         }
+    }
+
+    private void OnEnable()
+    {
+        coll.enabled = true;
+        movementController.NavMeshAgent.enabled = true;
+        ragdollHandler.CloseColliders();
+        isHit = false;
     }
 
     public float[] attackDurations;
@@ -56,7 +93,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         );
 
         fightFsm.AddState("Wait", onEnter: state => animator.SetAnimatorParameter(AnimatorParameterType.Bool, "move", false));
-        
+
         for (int i = 0; i < attackDurations.Length; i++)
         {
             int rand = i;
@@ -64,14 +101,17 @@ public class BaseEnemy : MonoBehaviour, IDamageable
             fightFsm.AddTransition(new TransitionAfter("Telegraph" + i.ToString(), "Wait", attackDurations[rand]));
         }
 
-        fightFsm.AddState("Telegraph", onEnter: state => { 
+        fightFsm.AddState("Telegraph", onEnter: state =>
+        {
             int random = UnityEngine.Random.Range(0, attackDurations.Length);
-            while (random == lastRandom) {
+            while (random == lastRandom)
+            {
                 random = UnityEngine.Random.Range(0, attackDurations.Length);
             }
             lastRandom = random;
             Debug.Log("telegraph " + random);
-        fightFsm.RequestStateChange("Telegraph" + random); } );
+            fightFsm.RequestStateChange("Telegraph" + random);
+        });
 
         // Because the exit transition should have the highest precedence,
         // it is added before the other transitions.
@@ -94,6 +134,8 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     void Update()
     {
         fsm.OnLogic();
+        if (!isHit)
+            transform.rotation = Quaternion.LookRotation((playerPosition - transform.position).normalized);
     }
 
 
