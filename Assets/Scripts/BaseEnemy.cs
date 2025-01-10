@@ -24,6 +24,8 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     private AIMovementController movementController;
     private AIAnimationController animator;
 
+    public float attackSpeedMultiplier = 1f;
+
     private Vector3 playerPosition => Player.Instance.transform.position;
     private float distanceToPlayer => Vector2.Distance(playerPosition, transform.position);
 
@@ -68,6 +70,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
 
     private void OnEnable()
     {
+        if (!movementController) movementController = GetComponent<AIMovementController>();
         coll.enabled = true;
         movementController.NavMeshAgent.enabled = true;
         ragdollHandler.CloseColliders();
@@ -82,6 +85,13 @@ public class BaseEnemy : MonoBehaviour, IDamageable
     {
         movementController = GetComponent<AIMovementController>();
         animator = GetComponentInChildren<AIAnimationController>();
+
+        animator.SetAnimatorParameter(AnimatorParameterType.Float, "attackSpeed", false, attackSpeedMultiplier);
+
+        for (int i = 0; i < attackDurations.Length; i++)
+        {
+            attackDurations[i] = attackDurations[i] / attackSpeedMultiplier;
+        }
 
         fsm = new StateMachine();
 
@@ -117,7 +127,7 @@ public class BaseEnemy : MonoBehaviour, IDamageable
         // it is added before the other transitions.
         fightFsm.AddExitTransition("Wait");
 
-        fightFsm.AddTransition(new TransitionAfter("Wait", "Telegraph", 0.2f));
+        fightFsm.AddTransition(new TransitionAfter("Wait", "Telegraph", 0.1f));
 
         // Root FSM
         fsm.AddState("Chase", new State(

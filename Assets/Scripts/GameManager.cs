@@ -15,7 +15,8 @@ public class GameManager : MonoBehaviour
     private int _maxRound;
 
     private bool _isRoundEnd;
-    private bool _isGameEnd;
+    public bool IsGameEnd { get; private set; }
+    public bool IsGameStarted { get; private set; }
 
     private int _humanScore;
     public int HumanScore => _humanScore;
@@ -97,11 +98,12 @@ public class GameManager : MonoBehaviour
         if (newRoundStartDelay == aiNewRoundDelay)
         {
             Time.timeScale = 0.5f;
-            transform.DOScale(transform.localScale, 2).OnComplete(() => {
+            transform.DOScale(transform.localScale, 2).OnComplete(() =>
+            {
                 _aiEasy.gameObject.SetActive(false);
-        _aiNormal.gameObject.SetActive(false);
-        _aiHard.gameObject.SetActive(false);
-        Time.timeScale = 1;
+                _aiNormal.gameObject.SetActive(false);
+                _aiHard.gameObject.SetActive(false);
+                Time.timeScale = 1;
             });
         }
         else
@@ -156,6 +158,8 @@ public class GameManager : MonoBehaviour
 
     private void EndGame()
     {
+        IsGameEnd = true;
+        IsGameStarted = false;
         foreach (var obj in objArrayToToggleOnStart)
         {
             obj.SetActive(!obj.activeSelf);
@@ -178,6 +182,8 @@ public class GameManager : MonoBehaviour
 
     public void ClearActiveGame()
     {
+        IsGameEnd = false;
+        IsGameStarted = false;
         _currentRound = 1;
         _humanScore = 0;
         _aiScore = 0;
@@ -185,6 +191,8 @@ public class GameManager : MonoBehaviour
 
     public void StartGame(GameType gameType, GameDifficulty gameDifficulty, int roundCount)
     {
+        IsGameEnd = false;
+        IsGameStarted = true;
         foreach (var obj in objArrayToToggleOnStart)
         {
             obj.SetActive(!obj.activeSelf);
@@ -195,6 +203,19 @@ public class GameManager : MonoBehaviour
         GameDifficulty = gameDifficulty;
 
         OnGameStartEvent?.Invoke();
+
+        _aiEasy.gameObject.SetActive(false);
+        _aiNormal.gameObject.SetActive(false);
+        _aiHard.gameObject.SetActive(false);
+
+        _aiEasy.transform.position = _startPosOfAI;
+        _aiEasy.transform.eulerAngles = _startAngleOfAI;
+
+        _aiNormal.transform.position = _startPosOfAI;
+        _aiNormal.transform.eulerAngles = _startAngleOfAI;
+
+        _aiHard.transform.position = _startPosOfAI;
+        _aiHard.transform.eulerAngles = _startAngleOfAI;
 
         StartNewRound(1);
     }

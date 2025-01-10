@@ -6,10 +6,11 @@ public class BodyScaler : MonoBehaviour
 {
     public Camera head;
     public float DefaultHeight = 1.8f;
+    public float MinHeight = 1.2f;
 
-    IEnumerator Start()
+
+    void Update()
     {
-        yield return new WaitForSeconds(2);
         ScaleBody();
     }
 
@@ -17,7 +18,9 @@ public class BodyScaler : MonoBehaviour
     {
         Debug.Log("height: " + head.transform.position.y);
         float headHeight = head.transform.position.y;
-        float scale = headHeight / DefaultHeight;
+        float t = headHeight - MinHeight;
+        float d = DefaultHeight - MinHeight;
+        float scale = t / d;
         transform.localScale = Vector3.one * scale;
     }
 }

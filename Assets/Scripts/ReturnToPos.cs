@@ -39,15 +39,10 @@ public class ReturnToPos : MonoBehaviour
         // Check if a button (like the primary button on the right controller) is pressed
         if (rightController.TryGetFeatureValue(CommonUsages.primaryButton, out bool primaryButtonValue) && primaryButtonValue)
         {
-            transform.position = startPos;
+            /* transform.position = startPos;
             transform.eulerAngles = euler;
-        GetComponent<Rigidbody>().velocity = Vector3.zero;
+        GetComponent<Rigidbody>().velocity = Vector3.zero; */
         }
 
-        // Check if trigger is pressed on the left controller
-        if (leftController.TryGetFeatureValue(CommonUsages.triggerButton, out bool triggerButtonValue) && triggerButtonValue)
-        {
-            Debug.Log("Trigger button on left controller pressed!");
-        }
     }
 }

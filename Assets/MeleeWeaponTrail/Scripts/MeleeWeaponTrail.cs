@@ -15,10 +15,10 @@ public class MeleeWeaponTrail : MonoBehaviour
 {
 	[SerializeField]
 	bool _emit = true;
-	public bool Emit { set{_emit = value;} }
+	public bool Emit { set { _emit = value; } }
 
 	bool _use = true;
-	public bool Use { set{_use = value;} }
+	public bool Use { set { _use = value; } }
 
 	[SerializeField]
 	float _emitTime = 0.0f;
@@ -97,9 +97,10 @@ public class MeleeWeaponTrail : MonoBehaviour
 
 	void OnDisable()
 	{
+		if (_trailObject) _trailObject.gameObject.SetActive(false);
 		/* Destroy(_trailObject); */
 	}
-
+	
 	void Update()
 	{
 		if (!_use)
@@ -161,7 +162,7 @@ public class MeleeWeaponTrail : MonoBehaviour
 					else if (_points.Count > 1)
 					{
 						// add 1+subdivisions for every possible pair in the _points
-						for (int n = 0; n < 1+subdivisions; ++n)
+						for (int n = 0; n < 1 + subdivisions; ++n)
 							_smoothedPoints.Add(p);
 					}
 
@@ -197,7 +198,7 @@ public class MeleeWeaponTrail : MonoBehaviour
 						for (int n = 0; n < smoothTipList.Count; ++n)
 						{
 
-							int idx = _smoothedPoints.Count - (smoothTipList.Count-n);
+							int idx = _smoothedPoints.Count - (smoothTipList.Count - n);
 							// there are moments when the _smoothedPoints are lesser
 							// than what is required, when elements from it are removed
 							if (idx > -1 && idx < _smoothedPoints.Count)
@@ -205,7 +206,7 @@ public class MeleeWeaponTrail : MonoBehaviour
 								Point sp = new Point();
 								sp.basePosition = smoothBaseList[n];
 								sp.tipPosition = smoothTipList[n];
-								sp.timeCreated = Mathf.Lerp(firstTime, secondTime, (float)n/smoothTipList.Count);
+								sp.timeCreated = Mathf.Lerp(firstTime, secondTime, (float)n / smoothTipList.Count);
 								_smoothedPoints[idx] = sp;
 							}
 							//else
@@ -313,7 +314,7 @@ public class MeleeWeaponTrail : MonoBehaviour
 
 				newColors[n * 2] = newColors[(n * 2) + 1] = color;
 
-				float uvRatio = (float)n/pointsToUse.Count;
+				float uvRatio = (float)n / pointsToUse.Count;
 				newUV[n * 2] = new Vector2(uvRatio, 0);
 				newUV[(n * 2) + 1] = new Vector2(uvRatio, 1);
 

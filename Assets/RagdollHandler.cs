@@ -10,9 +10,15 @@ public class RagdollHandler : MonoBehaviour
 
     private void Awake()
     {
-        animator = GetComponent<Animator>();
-        rigidbodies = new List<Rigidbody>();
+        TryAssignColliders();
+    }
+
+    void TryAssignColliders()
+    {
+        if (colliders != null) return;
         colliders = GetComponentsInChildren<Collider>();
+        rigidbodies = new List<Rigidbody>();
+        animator = GetComponent<Animator>();
         foreach (Collider collider in colliders)
         {
             var rb = collider.GetComponent<Rigidbody>();
@@ -28,6 +34,7 @@ public class RagdollHandler : MonoBehaviour
 
     public void OpenColliders()
     {
+        TryAssignColliders();
         for (int i = 0; i < colliders.Length; i++)
         {
             var rb = rigidbodies[i];
@@ -39,11 +46,13 @@ public class RagdollHandler : MonoBehaviour
 
             coll.enabled = true;
         }
+        if (!animator) animator = GetComponent<Animator>();
         animator.enabled = false;
     }
 
     public void CloseColliders()
     {
+        TryAssignColliders();
         for (int i = 0; i < colliders.Length; i++)
         {
             var rb = rigidbodies[i];
@@ -55,25 +64,27 @@ public class RagdollHandler : MonoBehaviour
 
             coll.enabled = false;
         }
+        if (!animator) animator = GetComponent<Animator>();
+
         animator.enabled = true;
     }
 
     public void ApplyForceBy(Vector3 hitPos)
-{
-    foreach (var rb in rigidbodies)
     {
-        if (rb == null) continue; // Ensure the rigidbody exists
-        if (rb.GetComponent<SwordHit>()) continue;
+        foreach (var rb in rigidbodies)
+        {
+            if (rb == null) continue; // Ensure the rigidbody exists
+            if (rb.GetComponent<SwordHit>()) continue;
 
-        // Calculate direction from hit position to the rigidbody's position
-        Vector3 forceDirection = (rb.position - hitPos).normalized;
+            // Calculate direction from hit position to the rigidbody's position
+            Vector3 forceDirection = (rb.position - hitPos).normalized;
 
-        // Calculate force magnitude (you can tweak the multiplier to control the intensity)
-        float forceMagnitude = 10; // Replace with your desired force value
+            // Calculate force magnitude (you can tweak the multiplier to control the intensity)
+            float forceMagnitude = 10; // Replace with your desired force value
 
-        // Apply force to the rigidbody
-        rb.AddForce(forceDirection * forceMagnitude, ForceMode.Impulse);
+            // Apply force to the rigidbody
+            rb.AddForce(forceDirection * forceMagnitude, ForceMode.Impulse);
+        }
     }
-}
 
 }

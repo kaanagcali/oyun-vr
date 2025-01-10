@@ -108,18 +108,23 @@ public class InGameUIManager : MonoBehaviour
         GameManager.Instance.StartGame(_gameType, _gameDifficulty, _roundCount);
     }
 
+    public GameObject ray;
+
     public void CloseUI()
     {
+        FindObjectOfType<VRGamePause>().UnPause();
+        ray.SetActive(false);
         _isOpen = false;
         DOTween.Kill(transform, false);
-        transform.DOScale(Vector3.zero, 0.5f);
+        transform.DOScale(Vector3.zero, 0.5f).SetUpdate(true);
     }
 
     public void OpenUI()
     {
+        ray.SetActive(true);
         _isOpen = true;
         DOTween.Kill(transform, false);
-        transform.DOScale(_defaultScale, 1).SetEase(Ease.InOutBack);
+        transform.DOScale(_defaultScale, 1).SetEase(Ease.InOutBack).SetUpdate(true);
     }
 
     private void OnRoundCountChanged(float roundCount)
